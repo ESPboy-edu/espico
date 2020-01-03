@@ -69,7 +69,7 @@ void scani2c(){
 }
 
 void getKey(){
-  thiskey = 0;
+/*  thiskey = 0; 
   if(!mcp.digitalRead(0))
      thiskey |= KEY_A;
   if(!mcp.digitalRead(1))
@@ -86,7 +86,20 @@ void getKey(){
      thiskey |= KEY_LEFT;
   if(!mcp.digitalRead(7))
      thiskey |= KEY_RIGHT;
+*/
+uint8_t keyread;
+thiskey = 0;
+keyread = mcp.readGPIOAB()&255;
+  if(!(keyread&1)) thiskey |= KEY_LEFT;
+  if(!(keyread&2)) thiskey |= KEY_UP;
+  if(!(keyread&4)) thiskey |= KEY_DOWN;
+  if(!(keyread&8)) thiskey |= KEY_RIGHT;
+  if(!(keyread&16)) thiskey |= KEY_A;
+  if(!(keyread&32)) thiskey |= KEY_B;
+  if(!(keyread&64)) thiskey |= KEY_START;
+  if(!(keyread&128)) thiskey |= KEY_SELECT;
 }
+
 #else
 void getKey(){
   byte dio_in;

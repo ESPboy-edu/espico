@@ -5,7 +5,8 @@
 #include "acoos.h"
 #include <FS.h>
 #include "keys.h"
-// #define ESPBOY
+
+#define ESPBOY
 #ifdef ESPBOY
   #define APSSID "ESPboy"
   #define APHOST "espboy"
@@ -20,6 +21,7 @@
   #include <Adafruit_MCP23017.h>
   #include <Adafruit_MCP4725.h>
   #include <FastLED.h>
+  #include "ESPboyLogo.h"
 #else
   #define APSSID "espico"
   #define APHOST "espico"
@@ -29,7 +31,7 @@
 #endif
 
 // #define DISPLAY_X_OFFSET 12
-#define INFO_RIGHT
+//#define INFO_RIGHT
 // #define USE_NUNCHUCK
 #ifdef USE_NUNCHUCK
 #include <NintendoExtensionCtrl.h>
@@ -275,7 +277,7 @@ void setup() {
   //DAC init
   dac.begin(MCP4725address);
   delay(100);
-  dac.setVoltage(0, true);
+  dac.setVoltage(0, false);
   //buttons on mcp23017 init
   mcp.begin(MCP23017address);
   delay (100);
@@ -293,6 +295,27 @@ void setup() {
   mcp.digitalWrite(csTFTMCP23017pin, LOW);
   tft.init();
   tft.setRotation(0);
+  tft.fillScreen(0x0000);
+  tft.setTextSize(1);
+  tft.drawXBitmap(30, 24, ESPboyLogo, 68, 64, 0xFFE0);
+  tft.setTextColor(0xFFE0);
+  tft.setCursor(10,102);
+  tft.print(F("ESPiCo game engine"));
+   //sound init and test
+  pinMode(SOUNDPIN, OUTPUT);
+  delay (100);
+  tone(SOUNDPIN, 200, 100);
+  delay(100);
+  tone(SOUNDPIN, 100, 100);
+  delay(100);
+  noTone(SOUNDPIN);
+  //LCD backlit on
+  for (int count = 0; count < 1000; count += 50){
+    dac.setVoltage(count, false);
+    delay(50);
+  }
+  dac.setVoltage(4095, true);
+  delay(1000);
 #else
   tft.init();            // initialize LCD
   tft.setRotation(3);
@@ -300,15 +323,6 @@ void setup() {
   tft.fillScreen(0x0000);
   tft.setTextSize(1);
   tft.setTextColor(0xffff);
-  Serial.begin (115200);
-  //sound init and test
-  pinMode(SOUNDPIN, OUTPUT);
-  tone(SOUNDPIN, 200, 100);
-  delay(100);
-  tone(SOUNDPIN, 100, 100);
-  delay(100);
-  noTone(SOUNDPIN);
-
 #ifdef USE_NUNCHUCK
   nchuk.begin();
   while (!nchuk.connect()) {
