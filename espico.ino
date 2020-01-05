@@ -271,6 +271,7 @@ void setup() {
   // ------------------end ESP8266'centric------------------------------------
 #ifdef ESPBOY
   Wire.begin();
+  Wire.setClock(1000000);
   Serial.println();
   Serial.println(F("ESPboy"));
   scani2c();
